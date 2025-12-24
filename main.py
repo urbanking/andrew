@@ -132,16 +132,26 @@ with tab2:
 with tab3:
     st.header("생육 결과")
     
-    # EC별 평균 생중량 비교
-    ec_growth_data = {school: xlsx_data[school]['생중량'].mean() for school in xlsx_data}
-    fig = make_subplots(rows=2, cols=2, subplot_titles=["평균 생중량", "평균 잎 수", "평균 지상부 길이", "개체수 비교"])
+    # EC별 평균 생중량 비교 (엑셀 컬럼명 확인)
+    ec_growth_data = {}
+    for school in xlsx_data:
+        if '생중량' in xlsx_data[school].columns:
+            ec_growth_data[school] = xlsx_data[school]['생중량'].mean()
+        else:
+            st.error(f"{school} 시트에 '생중량' 컬럼이 없습니다.")
+            continue
     
-    # 평균 생중량
-    for school, growth in ec_growth_data.items():
-        fig.add_trace(go.Bar(x=[school], y=[growth], name=school), row=1, col=1)
-    
-    fig.update_layout(title="EC별 생육 비교", showlegend=True)
-    st.plotly_chart(fig)
+    if not ec_growth_data:
+        st.error("생중량 데이터가 없습니다.")
+    else:
+        fig = make_subplots(rows=2, cols=2, subplot_titles=["평균 생중량", "평균 잎 수", "평균 지상부 길이", "개체수 비교"])
+        
+        # 평균 생중량
+        for school, growth in ec_growth_data.items():
+            fig.add_trace(go.Bar(x=[school], y=[growth], name=school), row=1, col=1)
+        
+        fig.update_layout(title="EC별 생육 비교", showlegend=True)
+        st.plotly_chart(fig)
     
     # XLSX 다운로드
     buffer = io.BytesIO()
@@ -153,21 +163,3 @@ with tab3:
         file_name="EC별_생육_결과.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-# 학교별 EC 조건 표
-st.write("학교별 EC 조건")
-ec_conditions = {
-    '송도고': 1.0,
-    '하늘고': 2.0,
-    '아라고': 4.0,
-    '동산고': 8.0
-}
-school_data = {
-    '송도고': len(xlsx_data['송도고']),
-    '하늘고': len(xlsx_data['하늘고']),
-    '아라고': len(xlsx_data['아라고']),
-    '동산고': len(xlsx_data['동산고'])
-}
-ec_df = pd.DataFrame(list(ec_conditions.items()), columns=['학교명', 'EC 목표'])
-ec_df['개체수'] = ec_df['학교명'].map(school_data)
-ec_df['색상'] = ['#FF6347', '#2E8B57', '#4682B4', '#FFD700']  # 색상 지정, 문자열 끝을 닫는 부분 추가
-st.dataframe(ec_df)
