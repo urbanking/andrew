@@ -77,10 +77,10 @@ with tab1:
         '동산고': 8.0
     }
     school_data = {
-        '송도고': len(xlsx_data['송도고']),
-        '하늘고': len(xlsx_data['하늘고']),
-        '아라고': len(xlsx_data['아라고']),
-        '동산고': len(xlsx_data['동산고'])
+        '송도고': len(xlsx_data['송도고']) if '송도고' in xlsx_data else 0,
+        '하늘고': len(xlsx_data['하늘고']) if '하늘고' in xlsx_data else 0,
+        '아라고': len(xlsx_data['아라고']) if '아라고' in xlsx_data else 0,
+        '동산고': len(xlsx_data['동산고']) if '동산고' in xlsx_data else 0
     }
     ec_df = pd.DataFrame(list(ec_conditions.items()), columns=['학교명', 'EC 목표'])
     ec_df['개체수'] = ec_df['학교명'].map(school_data)
@@ -107,7 +107,7 @@ with tab1:
 with tab2:
     st.header("환경 데이터")
     
-    if selected_school != '전체':
+    if selected_school != '전체' and selected_school in csv_files:
         school_csv = csv_files[selected_school]
         
         # 평균 온도, 습도, pH, EC 비교 (2x2 서브플롯)
@@ -126,7 +126,7 @@ with tab2:
         st.plotly_chart(fig)
     
     else:
-        st.error("전체 학교 데이터를 비교할 수 없습니다. 특정 학교를 선택해 주세요.")
+        st.error("선택한 학교에 대한 데이터가 없습니다. 다른 학교를 선택해 주세요.")
 
 # Tab 3: 생육 결과
 with tab3:
