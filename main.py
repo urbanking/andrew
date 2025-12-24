@@ -162,4 +162,5 @@ with tab3:
         label="EC별 생육 결과 다운로드",
         data=buffer,
         file_name="EC별_생육_결과.xlsx",
-        mime="appli
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
