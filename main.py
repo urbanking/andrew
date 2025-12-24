@@ -76,12 +76,10 @@ with tab1:
         '아라고': 4.0,
         '동산고': 8.0
     }
-    school_data = {
-        '송도고': len(xlsx_data['송도고']) if '송도고' in xlsx_data else 0,
-        '하늘고': len(xlsx_data['하늘고']) if '하늘고' in xlsx_data else 0,
-        '아라고': len(xlsx_data['아라고']) if '아라고' in xlsx_data else 0,
-        '동산고': len(xlsx_data['동산고']) if '동산고' in xlsx_data else 0
-    }
+    
+    # CSV 파일에서 각 학교의 데이터 로드
+    school_data = {school: len(csv_files[f"{school}_환경데이터"]) if f"{school}_환경데이터" in csv_files else 0 for school in ec_conditions}
+    
     ec_df = pd.DataFrame(list(ec_conditions.items()), columns=['학교명', 'EC 목표'])
     ec_df['개체수'] = ec_df['학교명'].map(school_data)
     ec_df['색상'] = ['#FF6347', '#2E8B57', '#4682B4', '#FFD700']  # 색상 지정
@@ -107,8 +105,8 @@ with tab1:
 with tab2:
     st.header("환경 데이터")
     
-    if selected_school != '전체' and selected_school in csv_files:
-        school_csv = csv_files[selected_school]
+    if selected_school != '전체' and f"{selected_school}_환경데이터" in csv_files:
+        school_csv = csv_files[f"{selected_school}_환경데이터"]
         
         # 평균 온도, 습도, pH, EC 비교 (2x2 서브플롯)
         fig = make_subplots(rows=2, cols=2, subplot_titles=["평균 온도", "평균 습도", "평균 pH", "목표 EC vs 실측 EC"])
@@ -126,7 +124,7 @@ with tab2:
         st.plotly_chart(fig)
     
     else:
-        st.error("선택한 학교에 대한 데이터가 없습니다. 다른 학교를 선택해 주세요.")
+        st.error(f"선택한 학교({selected_school})에 대한 데이터가 없습니다. 다른 학교를 선택해 주세요.")
 
 # Tab 3: 생육 결과
 with tab3:
