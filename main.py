@@ -155,10 +155,13 @@ with tab3:
     
     # XLSX 다운로드
     buffer = io.BytesIO()
-    pd.DataFrame(ec_growth_data).to_excel(buffer, index=False, engine="openpyxl")
+    ec_growth_df = pd.DataFrame(list(ec_growth_data.items()), columns=['학교', '평균 생중량'])
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        ec_growth_df.to_excel(writer, index=False, sheet_name="EC별 생육 결과")
     buffer.seek(0)
     
     st.download_button(
+        label="EC별 생육 결과 다운로드",
         data=buffer,
         file_name="EC별_생육_결과.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
