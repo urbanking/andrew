@@ -136,7 +136,7 @@ with tab3:
         if '생중량' in xlsx_data[school].columns:
             ec_growth_data[school] = xlsx_data[school]['생중량'].mean()
         else:
-            st.error(f"{school} 시트에 '생중량' 컬럼이 없습니다.")
+            st.warning(f"{school} 시트에 '생중량' 컬럼이 없습니다. 다른 컬럼을 사용할 수 있습니다.")
             continue
     
     if not ec_growth_data:
@@ -162,5 +162,4 @@ with tab3:
         label="EC별 생육 결과 다운로드",
         data=buffer,
         file_name="EC별_생육_결과.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        mime="appli
